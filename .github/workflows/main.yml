@@ -32,3 +32,4 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           local-dir: ./dist/
           server-dir: ${{ secrets.DIR }}
+          environment-variable: ${{ secrets.WORDPRESS_API_URL }}
