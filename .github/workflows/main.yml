@@ -36,4 +36,4 @@ jobs:
           ftp-username: ${{ secrets.USERNAME }}
           ftp-password: ${{ secrets.PASSWORD }}
           local-dir: ./dist/
-          server-dir: ${{ secrets.DIR }}
+          remote-dir: ${{ secrets.DIR }}
