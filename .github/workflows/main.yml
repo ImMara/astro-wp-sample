@@ -55,41 +55,27 @@ jobs:
           node-version: '16.x'
 
       - name: Install required dependencies
-        run: npm install -g @actions/github-script
+        run: npm install -g github-token-cli
 
-      - name: Remove old workflow runs
+      - name: Authenticate with GitHub token
         run: |
-          const { Octokit } = require('@octokit/rest');
-          const octokit = new Octokit({
-            auth: process.env.G_TOKEN
-          });
-          
-          async function removeOldRuns() {
-            const owner = process.env.G_REPOSITORY_OWNER;
-            const repo = process.env.G_REPOSITORY;
-            const workflowName = 'Build and Deploy';
-            const maxRunsToKeep = 3;
-          
-            const response = await octokit.rest.actions.listWorkflowRuns({
-              owner,
-              repo,
-              workflow_name: workflowName,
-              per_page: 100
-            });
-          
-            const sortedRuns = response.data.workflow_runs
-              .filter(run => run.id !== Number(process.env.GITHUB_RUN_ID))
-              .sort((a, b) => b.created_at.localeCompare(a.created_at));
-          
-            const runsToDelete = sortedRuns.slice(maxRunsToKeep);
-          
-            for (const run of runsToDelete) {
-              await octokit.rest.actions.deleteWorkflowRun({
-                owner,
-                repo,
-                run_id: run.id
-              });
-            }
-          }
-          
-          removeOldRuns();
+          echo "::set-env name=GITHUB_TOKEN::${{ secrets.G_TOKEN }}"
+
+      - name: Fetch workflow runs
+        id: fetch-runs
+        run: |
+          gh run list --json workflow_name="Build and Deploy" --limit 4 --query '[].id' --jq '.' >> runs.txt
+
+      - name: Read runs file
+        id: read-runs
+        run: |
+          echo "::set-output name=runs::$(cat runs.txt)"
+
+      - name: Delete old runs
+        run: |
+          for run_id in ${{ steps.read-runs.outputs.runs }}; do
+            if [[ $run_id != ${{ github.run_id }} ]]; then
+              echo "Deleting run: $run_id"
+              gh run delete $run_id -y
+            fi
+          done
