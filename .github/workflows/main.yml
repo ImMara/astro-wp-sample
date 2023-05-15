@@ -31,4 +31,4 @@ jobs:
           username: ${{ USERNAME }}
           password: ${{ PASSWORD }}
           local-dir: ./app/dist/
-          server-dir: /astropress.eraertsalan.be
+          server-dir: ${{ DIR }}
