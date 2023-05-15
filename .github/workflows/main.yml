@@ -49,33 +49,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16.x'
-
-      - name: Install required dependencies
-        run: npm install -g github-token-cli
-
-      - name: Authenticate with GitHub token
-        run: |
-          echo "::set-env name=GITHUB_TOKEN::${{ secrets.G_TOKEN }}"
-
       - name: Fetch workflow runs
         id: fetch-runs
         run: |
-          gh run list --json workflow_name="Build and Deploy" --limit 4 --query '[].id' --jq '.' >> runs.txt
-
-      - name: Read runs file
-        id: read-runs
-        run: |
-          echo "::set-output name=runs::$(cat runs.txt)"
+          echo "::set-env name=AUTHORIZATION::Bearer ${{ secrets.G_TOKEN }}"
+          runs=$(curl -s -H "Authorization: Bearer ${{ secrets.G_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/workflows/${{ github.workflow_id }}/runs?per_page=4" \
+            | jq -r '.workflow_runs[].id')
+          echo "::set-output name=runs::$runs"
 
       - name: Delete old runs
         run: |
-          for run_id in ${{ steps.read-runs.outputs.runs }}; do
+          for run_id in ${{ steps.fetch-runs.outputs.runs }}; do
             if [[ $run_id != ${{ github.run_id }} ]]; then
               echo "Deleting run: $run_id"
-              gh run delete $run_id -y
+              curl -X POST -H "Authorization: Bearer ${{ secrets.G_TOKEN }}" \
+                "https://api.github.com/repos/${{ github.repository }}/actions/runs/$run_id/cancel"
             fi
           done
