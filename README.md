@@ -1,47 +1,66 @@
-# Astro Starter Kit: Minimal
+to add in any wp functions.php from ur active theme 
 
-```
-npm create astro@latest -- --template minimal
-```
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/minimal)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/minimal)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/minimal/devcontainer.json)
+    function triggerGitHubAction() {
+    $api_url = 'https://api.github.com/repos/<GITHUBUSERNAME>/<REPOSITORYNAME>/actions/workflows/<WORKFLOWID>/dispatches';
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+    $data = array(
+        'ref' => 'refs/heads/master',
+        'inputs' => array(
+            'branch' => 'master'
+        )
+    );
 
-## 🚀 Project Structure
+    $headers = array(
+        'Content-type: application/json',
+        'Authorization: Bearer <YOUR GITHUB TOKEN>',
+        'User-Agent: <REPOSITORYNAME>'
+    );
 
-Inside of your Astro project, you'll see the following folders and files:
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $api_url);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $response = curl_exec($ch);
 
-```
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+    if ($response === FALSE) {
+        $error = curl_error($ch);
+        // Gérer l'erreur de cURL
+        echo 'Erreur cURL : ' . $error;
+    } else {
+        // Succès, l'action GitHub a été déclenchée
+        // La réponse complète de l'API GitHub est contenue dans la variable $response
+        // Vous pouvez effectuer le traitement nécessaire sur la réponse
+        echo 'Réponse de l\'API GitHub : ' . $response;
+    }
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+    curl_close($ch);
+    }
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+    function add_custom_admin_button() {
+    global $wp_admin_bar;
+    $workflow_id = <WORKFLOWID>; // Remplacez par l'ID de votre workflow
+    $button_args = array(
+        'id'    => 'trigger-github-action',
+        'title' => 'Déclencher l\'action GitHub',
+        'href'  => wp_nonce_url( admin_url( 'admin-ajax.php?action=trigger_github_action' ), 'trigger_github_action' ),
+        'meta'  => array( 'class' => 'trigger-github-action-button' )
+    );
+    $wp_admin_bar->add_node( $button_args );
+    }
+    add_action( 'admin_bar_menu', 'add_custom_admin_button', 100 );
 
-Any static assets, like images, can be placed in the `public/` directory.
+    // Gérer le déclenchement de l'action via AJAX
+    function trigger_github_action() {
+    // Vérifier la validité du jeton de sécurité
+    check_ajax_referer( 'trigger_github_action', 'security' );
+    
+        // Appeler la fonction PHP triggerGitHubAction() via une requête AJAX
+        triggerGitHubAction();
+    }
+    add_action( 'wp_ajax_trigger_github_action', 'trigger_github_action' );
+    add_action( 'wp_ajax_nopriv_trigger_github_action', 'trigger_github_action' );
 
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:3000`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+``
