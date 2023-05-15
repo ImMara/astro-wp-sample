@@ -33,7 +33,7 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@3.1.1
         with:
           ftp-server: ${{ secrets.SERVER }}
-          ftp-username: ${{ secrets.USERNAME }}
+          ftp-username: ${{ secrets.USER }}
           ftp-password: ${{ secrets.PASSWORD }}
           local-dir: ./dist/
-          remote-dir: ${{ secrets.DIR }}
+          git-ftp-args: --remote-root ${{ secrets.DIR }}
