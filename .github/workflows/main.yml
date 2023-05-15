@@ -49,19 +49,47 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set up GitHub CLI
-        uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
 
-      - name: Fetch workflow runs
-        id: fetch-runs
-        run: |
-          echo "::set-output name=runs::$(gh workflow list-runs --json 'Build and Deploy' -L 3 --query '[].id' --jq '.')"
+      - name: Install required dependencies
+        run: npm install -g @actions/github-script
 
-      - name: Delete old builds
+      - name: Remove old workflow runs
         run: |
-          for run_id in ${{ steps.fetch-runs.outputs.runs }}; do
-            if [[ $run_id != ${{ github.run_id }} ]]; then
-              echo "Deleting build: $run_id"
-              gh run delete $run_id -y
-            fi
-          done
+          const { Octokit } = require('@octokit/rest');
+          const octokit = new Octokit({
+            auth: process.env.GITHUB_TOKEN
+          });
+          
+          async function removeOldRuns() {
+            const owner = process.env.GITHUB_REPOSITORY_OWNER;
+            const repo = process.env.GITHUB_REPOSITORY;
+            const workflowName = 'Build and Deploy';
+            const maxRunsToKeep = 3;
+          
+            const response = await octokit.rest.actions.listWorkflowRuns({
+              owner,
+              repo,
+              workflow_name: workflowName,
+              per_page: 100
+            });
+          
+            const sortedRuns = response.data.workflow_runs
+              .filter(run => run.id !== Number(process.env.GITHUB_RUN_ID))
+              .sort((a, b) => b.created_at.localeCompare(a.created_at));
+          
+            const runsToDelete = sortedRuns.slice(maxRunsToKeep);
+          
+            for (const run of runsToDelete) {
+              await octokit.rest.actions.deleteWorkflowRun({
+                owner,
+                repo,
+                run_id: run.id
+              });
+            }
+          }
+          
+          removeOldRuns();
