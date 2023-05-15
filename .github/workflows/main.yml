@@ -53,7 +53,7 @@ jobs:
         id: fetch-runs
         run: |
           runs=$(curl -s -H "Authorization: Bearer ${{ secrets.G_TOKEN }}" \
-            "https://api.github.com/repos/${{ secrets.G_REPOSITORY }}/actions/workflows/${{ secrets.G_ID }}/runs?per_page=3" \
+            "https://api.github.com/repos/${{ secrets.G_REPOSITORY_OWNER }}/${{ secrets.G_REPOSITORY }}/actions/workflows/${{ secrets.G_ID }}/runs?per_page=3" \
             | jq -r '.workflow_runs[].id')
           echo "::set-output name=runs::$runs"
 
@@ -63,6 +63,6 @@ jobs:
             if [[ $run_id != ${{ github.run_id }} ]]; then
               echo "Deleting run: $run_id"
               curl -X POST -H "Authorization: Bearer ${{ secrets.G_TOKEN }}" \
-                "https://api.github.com/repos/${{ secrets.G_REPOSITORY }}/actions/runs/$run_id/cancel"
+                "https://api.github.com/repos/${{ secrets.G_REPOSITORY_OWNER }}/${{ secrets.G_REPOSITORY }}/actions/runs/$run_id/cancel"
             fi
           done
