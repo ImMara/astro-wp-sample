@@ -1,0 +1,27 @@
+---
+const {title, image } = Astro.props;
+---
+<section style={"background-image:url('"+image+"')"}>
+    <h1>{title}</h1>
+</section>
+
+<style define:vars={{image}}>
+    section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-sizing: border-box;
+        min-height: 250px;
+        background-size: cover;
+        background-position: center;
+        border-radius: 10px;
+        font-size: 2rem;
+        padding: 4rem 3rem;
+    }
+    h1 {
+        padding: 5px 20px;
+        text-align: center;
+        display: inline-block;
+        border: 1px solid black;
+    }
+</style>

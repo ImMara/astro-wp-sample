@@ -1,0 +1,23 @@
+---
+import PostCard from "../components/PostCard.astro";
+import { homePagePostsQuery } from "../lib/api";
+import Layout from "../layouts/Layout.astro";
+import Header from "../layouts/Header.astro";
+
+const data = await homePagePostsQuery();
+const posts = data.posts.nodes;
+
+---
+
+<Layout title='Home Page'>
+	<main>
+		<h2>Recent Posts</h2>
+		{
+			posts.map(post => {
+				return (
+					<PostCard post={post}></PostCard>
+				)
+			})
+		}
+	</main>
+</Layout>
