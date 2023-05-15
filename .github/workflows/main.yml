@@ -44,24 +44,21 @@ jobs:
           local-dir: ./dist/
           server-dir: /astropress/
 
-  cleanup:
-    needs: build-and-deploy
-    runs-on: ubuntu-latest
+    cleanup:
+      needs: build-and-deploy
+      runs-on: ubuntu-latest
 
-    steps:
-      - name: Set up GitHub CLI
-        uses: actions/checkout@v2
+      steps:
+        - name: Fetch workflow runs
+          id: fetch-runs
+          run: |
+            echo "::set-output name=runs::$(gh run list --json workflow_name=Build and Deploy --limit 3 --query '[].id' --jq '.')"
 
-      - name: Fetch workflow runs
-        id: fetch-runs
-        run: |
-          echo "::set-output name=runs::$(gh workflow list-runs --json 'Build and Deploy' -L 3 --query '[].id' --jq '.')"
-
-      - name: Delete old builds
-        run: |
-          for run_id in ${{ steps.fetch-runs.outputs.runs }}; do
-            if [[ $run_id != ${{ github.run_id }} ]]; then
-              echo "Deleting build: $run_id"
-              gh workflow run delete $run_id -y
-            fi
-          done
+        - name: Delete old builds
+          run: |
+            for run_id in ${{ steps.fetch-runs.outputs.runs }}; do
+              if [[ $run_id != ${{ github.run_id }} ]]; then
+                echo "Deleting build: $run_id"
+                gh run delete $run_id -y
+              fi
+            done
