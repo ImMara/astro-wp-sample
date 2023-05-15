@@ -61,12 +61,12 @@ jobs:
         run: |
           const { Octokit } = require('@octokit/rest');
           const octokit = new Octokit({
-            auth: process.env.GITHUB_TOKEN
+            auth: process.env.G_TOKEN
           });
           
           async function removeOldRuns() {
-            const owner = process.env.GITHUB_REPOSITORY_OWNER;
-            const repo = process.env.GITHUB_REPOSITORY;
+            const owner = process.env.G_REPOSITORY_OWNER;
+            const repo = process.env.G_REPOSITORY;
             const workflowName = 'Build and Deploy';
             const maxRunsToKeep = 3;
           
