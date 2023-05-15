@@ -1,5 +1,6 @@
 Example of this project : https://astropress.eraertsalan.be/
-to add in any wp functions.php from ur active theme 
+to add in any wp functions.php from ur active theme , reading-options must not be set to static page.
+
 
 
     function triggerGitHubAction() {

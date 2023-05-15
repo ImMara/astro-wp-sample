@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/astro-wp-sample.iml" filepath="$PROJECT_DIR$/.idea/astro-wp-sample.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/astrowp.iml" filepath="$PROJECT_DIR$/.idea/astrowp.iml" />
     </modules>
   </component>
 </project>
