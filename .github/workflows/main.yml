@@ -1,12 +1,16 @@
 name: Build and Deploy
 
 on:
+  push:
+    branches:
+      - master
   workflow_dispatch:
     inputs:
       branch:
         description: 'Branch to build and deploy'
         required: true
         default: 'master'
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
