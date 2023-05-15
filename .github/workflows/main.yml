@@ -36,4 +36,4 @@ jobs:
           ftp-username: ${{ secrets.USER }}
           ftp-password: ${{ secrets.PASSWORD }}
           local-dir: ./dist/
-          git-ftp-args: --remote-root ${{ secrets.DIR }}
+          server-dir: ${{ secrets.DIR }}
