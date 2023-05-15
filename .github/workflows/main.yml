@@ -36,4 +36,4 @@ jobs:
           username: ${{ secrets.USER }}
           password: ${{ secrets.PASSWORD }}
           local-dir: ./dist/
-          server-dir: ${{ secrets.DIR }}
+          server-dir: '/home/eral0858/astropress/'
