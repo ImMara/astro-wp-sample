@@ -1,3 +1,4 @@
+Example of this project : http://astropress.eraertsalan.be/
 to add in any wp functions.php from ur active theme 
 
 
