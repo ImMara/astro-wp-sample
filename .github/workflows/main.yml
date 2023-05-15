@@ -21,6 +21,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Set API URLs as environment variables
+        run: |
+          echo "WC_API_URL=${{ secrets.WC_API_URL }}" >> $GITHUB_ENV
+          echo "WORDPRESS_API_URL=${{ secrets.WORDPRESS_API_URL }}" >> $GITHUB_ENV        
+
       - name: Build AstroJS project
         run: npm run build
 
@@ -32,4 +37,3 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           local-dir: ./dist/
           server-dir: ${{ secrets.DIR }}
-          environment-variable: ${{ secrets.WORDPRESS_API_URL }}
