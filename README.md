@@ -64,5 +64,11 @@ to add in any wp functions.php from ur active theme , reading-options must not b
     }
     add_action( 'wp_ajax_trigger_github_action', 'trigger_github_action' );
     add_action( 'wp_ajax_nopriv_trigger_github_action', 'trigger_github_action' );
+    function new_excerpt_more($more) {
+        global $post;
+        remove_filter('excerpt_more', 'new_excerpt_more');
+        return ' <a class="read_more" href="'. get_permalink($post->ID) . '">' . ' do whatever you want to update' . '</a>';
+    }
+    add_filter('excerpt_more','new_excerpt_more',11);
 
 ``
