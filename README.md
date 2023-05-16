@@ -1,6 +1,7 @@
 Example of this project : https://astropress.eraertsalan.be/
 
-![78092123b133f2e1a74d5f8ba98b5be9.png](..%2F78092123b133f2e1a74d5f8ba98b5be9.png)![d39f4e852fdad50a5392b8eae4730e1f.png](..%2Fd39f4e852fdad50a5392b8eae4730e1f.png)
+![d39f4e852fdad50a5392b8eae4730e1f.png](d39f4e852fdad50a5392b8eae4730e1f.png)
+![78092123b133f2e1a74d5f8ba98b5be9.png](78092123b133f2e1a74d5f8ba98b5be9.png)
 
 to add in any wp functions.php from ur active theme , reading-options must not be set to static page.
 
